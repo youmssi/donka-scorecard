@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "data": "sample-applications.csv",
+  "target": {
+    "column": "defaulted",
+    "bad_label": 1,
+    "good_label": 0,
+    "definition": "Missed a contractual payment within 12 months of origination.",
+    "minimum_bad_outcomes": 25
+  },
+  "windows": {
+    "date_column": "application_date",
+    "observation": "Application characteristics recorded at origination.",
+    "performance": "12 months after origination",
+    "development_start": "2022-01-01",
+    "development_end": "2024-01-01",
+    "out_of_time_start": "2024-01-01",
+    "out_of_time_end": "2025-01-01"
+  },
+  "binning": {
+    "minimum_bin_fraction": 0.05,
+    "minimum_prebin_fraction": 0.02,
+    "minimum_bins": 2,
+    "maximum_bins": 5,
+    "prebins": 20
+  },
+  "features": [
+    {"name": "months_on_book", "column": "months_on_book", "field": "monthsOnBook", "label": "Months on book", "type": "numeric", "minimum": 0, "special_values": [-1], "monotonic_trend": "auto"},
+    {"name": "monthly_debt", "column": "monthly_debt", "field": "monthlyDebt", "label": "Monthly debt payments", "type": "numeric", "minimum": 0, "special_values": [-999], "monotonic_trend": "auto"},
+    {"name": "income_band", "column": "income_band", "field": "incomeBand", "label": "Income band", "type": "categorical", "values": ["low", "middle", "high", "unknown"], "special_values": ["unknown"]}
+  ],
+  "pack": {
+    "key": "statistical-scorecard-example",
+    "name_en": "Statistical scorecard example",
+    "name_fr": "Exemple de scorecard statistique",
+    "description_en": "A synthetic example of a statistical scorecard. Refit and validate before any use.",
+    "description_fr": "Un exemple synthétique de scorecard statistique. Réentraîner et valider avant toute utilisation.",
+    "market": "CM",
+    "currency": "XAF",
+    "base_points": 600,
+    "base_odds": 20,
+    "points_to_double_odds": 20,
+    "higher_score_is_safer": true,
+    "scenario_count": 8,
+    "guide_en": "# Statistical scorecard example\n\nThis pack uses synthetic data and is for evaluation only. Its target, windows, score bands and thresholds are examples, not credit policy. Validate on representative, approved data before considering use.\n\nImport the generated directory or zip through Studio's Pack file flow. Review the model report, input contract, band thresholds, feature bins, local requirements and applicable regulation. Training data is not included in the pack.\n\nThe score estimates observed repayment outcomes for the selected population. Accepted-only data is biased because declined applicants have no repayment outcome. Small samples make bins and performance estimates unstable.",
+    "guide_fr": "# Exemple de scorecard statistique\n\nCe pack utilise des données synthétiques et sert uniquement à l'évaluation. La cible, les périodes, les classes et les seuils sont des exemples, et non une politique de crédit. Valider sur des données représentatives et autorisées avant tout usage.\n\nImporter le dossier ou le fichier zip généré via l'import de packs de Studio. Examiner le rapport, le contrat d'entrée, les seuils, les tranches, les exigences locales et la réglementation applicable. Les données d'entraînement ne sont pas incluses dans le pack.\n\nLe score estime les remboursements observés pour la population sélectionnée. Les données limitées aux demandes acceptées sont biaisées, car les demandes refusées n'ont pas d'historique de remboursement. Les petits échantillons rendent les tranches et mesures instables."
+  }
+}
