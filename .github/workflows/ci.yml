@@ -22,3 +22,45 @@ jobs:
       - run: uv run ruff check .
       - run: uv run pytest
       - run: uv run donka-scorecard build examples/config.json
+
+  studio-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: donka
+          POSTGRES_PASSWORD: donka
+          POSTGRES_DB: donka
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U donka"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://donka:donka@localhost:5432/donka
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked
+      - run: uv run donka-scorecard build examples/config.json
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: youmssi/donka
+          ref: 0c2233ef798b3f6de11b33ea7284a7efa28cab3c
+          path: studio
+          persist-credentials: false
+      - run: cp -R ../examples/dist/statistical-scorecard-example packs/statistical-scorecard-example
+        working-directory: studio
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+      - run: cargo test --locked --package donka-app --test packs every_pack_of_the_catalogue_imports_and_its_scenarios_pass
+        working-directory: studio
